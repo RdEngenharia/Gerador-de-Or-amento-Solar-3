@@ -134,35 +134,35 @@ export default function ProposalForm({ companyConfig }: ProposalFormProps) {
 
       // --- CABEÇALHO ---
       doc.setFillColor(...theme);
-      doc.rect(0, 0, 210, 40, 'F');
+      doc.rect(0, 0, 210, 35, 'F');
       doc.setTextColor(255);
-      doc.setFontSize(22);
-      doc.text(companyConfig.razao, 15, 15);
+      doc.setFontSize(20);
+      doc.text(companyConfig.razao, 15, 12);
       
-      doc.setFontSize(9);
-      doc.text(`CNPJ: ${companyConfig.cnpj || "Não informado"}`, 15, 22);
-      doc.text(`WhatsApp: ${companyConfig.tel || "Não informado"}`, 15, 27);
-      doc.text("Soluções Inteligentes em Energia Fotovoltaica", 15, 32);
+      doc.setFontSize(8);
+      doc.text(`CNPJ: ${companyConfig.cnpj || "Não informado"}`, 15, 18);
+      doc.text(`WhatsApp: ${companyConfig.tel || "Não informado"}`, 15, 23);
+      doc.text("Soluções Inteligentes em Energia Fotovoltaica", 15, 28);
       
       if (companyConfig.logo) {
-        try { doc.addImage(companyConfig.logo, 'PNG', 160, 5, 35, 30); } catch(e){}
+        try { doc.addImage(companyConfig.logo, 'PNG', 165, 3, 30, 25); } catch(e){}
       }
 
       // --- DADOS CLIENTE ---
-      let y = 55;
+      let y = 45;
       doc.setTextColor(40);
-      doc.setFontSize(12);
+      doc.setFontSize(11);
       doc.setFont(undefined, 'bold');
       doc.text("PROPOSTA TÉCNICO-COMERCIAL", 15, y);
       
-      y += 10;
-      doc.setFontSize(9);
+      y += 8;
+      doc.setFontSize(8);
       doc.setFont(undefined, 'normal');
       doc.text(`Cliente: ${clientName || "Não identificado"}`, 15, y);
       doc.text(`Doc: ${clientDoc || "---"}`, 120, y);
-      y += 5;
+      y += 4;
       doc.text(`Endereço: ${clientAddress || "---"}`, 15, y);
-      y += 5;
+      y += 4;
       doc.text(`Data: ${new Date(quoteDate).toLocaleDateString('pt-BR')}`, 15, y);
 
       // --- GRÁFICO (Canvas oculto) ---
@@ -185,100 +185,129 @@ export default function ProposalForm({ companyConfig }: ProposalFormProps) {
           });
           
           const chartImg = chart.toBase64Image();
-          doc.addImage(chartImg, 'PNG', 15, y + 5, 180, 60);
+          doc.addImage(chartImg, 'PNG', 15, y + 4, 180, 50);
           chart.destroy();
         }
       }
 
-      y += 75;
+      y += 60;
 
       // --- ESPECIFICAÇÕES TÉCNICAS ---
       doc.setFillColor(248, 250, 252);
-      doc.rect(15, y, 180, 45, 'F');
+      doc.rect(15, y, 180, 40, 'F');
       doc.setTextColor(...theme);
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont(undefined, 'bold');
-      doc.text("ENGENHARIA E EQUIPAMENTOS", 20, y + 10);
+      doc.text("ENGENHARIA E EQUIPAMENTOS", 20, y + 8);
       
       doc.setTextColor(60);
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont(undefined, 'normal');
       const finalInv = inverterBrand === 'Outro' ? manualInverter : inverterBrand;
       const finalPan = panelBrand === 'Outro' ? manualPanel : panelBrand;
 
-      doc.text(`• Potência do Sistema: ${totalKwp} kWp`, 20, y + 18);
-      doc.text(`• Módulos Solar: ${qtd}x ${finalPan} ${panelPower}Wp`, 20, y + 24);
-      doc.text(`• Inversor: ${finalInv} (Gar. ${inverterWarranty} Anos)`, 20, y + 30);
-      doc.text(`• Produção Estimada: ${(Number(totalKwp) * cityHsp * 30 * 0.8).toFixed(0)} kWh/mês`, 20, y + 36);
+      doc.text(`• Potência do Sistema: ${totalKwp} kWp`, 20, y + 16);
+      doc.text(`• Módulos Solar: ${qtd}x ${finalPan} ${panelPower}Wp`, 20, y + 21);
+      doc.text(`• Inversor: ${finalInv} (Gar. ${inverterWarranty} Anos)`, 20, y + 26);
+      doc.text(`• Produção Estimada: ${(Number(totalKwp) * cityHsp * 30 * 0.8).toFixed(0)} kWh/mês`, 20, y + 31);
 
       // Adiciona fotos do Inversor/Painel se existirem
-      if (companyConfig.panelImage) try { doc.addImage(companyConfig.panelImage, 'PNG', 155, y + 10, 25, 25); } catch(e){}
-      if (companyConfig.inverterImage) try { doc.addImage(companyConfig.inverterImage, 'PNG', 120, y + 10, 25, 25); } catch(e){}
+      if (companyConfig.panelImage) try { doc.addImage(companyConfig.panelImage, 'PNG', 160, y + 8, 22, 22); } catch(e){}
+      if (companyConfig.inverterImage) try { doc.addImage(companyConfig.inverterImage, 'PNG', 130, y + 8, 22, 22); } catch(e){}
 
-      y += 55;
+      y += 48;
 
       // --- ECONOMIA ESTIMADA ---
       doc.setTextColor(...theme);
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont(undefined, 'bold');
       doc.text("ESTIMATIVA DE NOVAS FATURAS (Pós-Solar)", 15, y);
       
       doc.setTextColor(60);
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont(undefined, 'normal');
-      y += 8;
+      y += 6;
       doc.text(`Unidade Geradora (${ugContract || 'Principal'}): ~ ${formatCurrency(faturaUG)} (Consumo + Taxa)`, 15, y);
       
       compensationUnits.forEach((unit, idx) => {
-        y += 6;
+        y += 5;
         const cons = parseFloat(unit.consumption) || 0;
-        // Calcula a fatura considerando que o consumo será compensado, sobrando a taxa mínima/disponibilidade
         const f = Math.max(taxaMinima, (cons * custoKwhInjetado));
         doc.text(`Unidade Rateio (${unit.contractNumber || 'Contrato'}): ~ ${formatCurrency(f)} (Incluso Taxa Mínima)`, 15, y);
       });
 
       if (aiAnalysis) {
-        y += 15;
+        y += 10;
         doc.setTextColor(...theme);
-        doc.setFontSize(10);
+        doc.setFontSize(9);
         doc.setFont(undefined, 'bold');
         doc.text("ANÁLISE DO ESPECIALISTA IA", 15, y);
         doc.setTextColor(80);
-        doc.setFontSize(8);
+        doc.setFontSize(7);
         doc.setFont(undefined, 'italic');
         const lines = doc.splitTextToSize(aiAnalysis, 180);
-        doc.text(lines, 15, y + 6);
-        y += (lines.length * 4) + 5;
+        doc.text(lines, 15, y + 5);
+        y += (lines.length * 3.5) + 4;
       } else {
-        y += 15;
+        y += 8;
       }
 
       // --- INVESTIMENTO ---
       doc.setFillColor(...theme);
-      doc.rect(15, y, 180, 20, 'F');
+      doc.rect(15, y, 180, 16, 'F');
       doc.setTextColor(255);
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont(undefined, 'bold');
-      doc.text(`INVESTIMENTO TOTAL: ${formatCurrency(totalInvest)}`, 25, y + 12);
+      doc.text(`INVESTIMENTO TOTAL: ${formatCurrency(totalInvest)}`, 25, y + 10);
+
+      // --- RETORNO FINANCEIRO (PAYBACK) ---
+      y += 22;
+      doc.setTextColor(...theme);
+      doc.setFontSize(10);
+      doc.setFont(undefined, 'bold');
+      doc.text("RETORNO FINANCEIRO E ECONOMIA", 15, y);
+
+      const tariff = 0.95;
+      const totalMonthlyCons = consumptionType === 'media' ? parseFloat(avgConsumption || '0') : 
+        (monthlyConsumptions.reduce((a, b) => Number(a) + Number(b), 0) / 12);
+      const totalCompCons = compensationUnits.reduce((acc, u) => acc + (parseFloat(u.consumption) || 0), 0);
+      const totalSystemCons = totalMonthlyCons + totalCompCons;
+      
+      const currentMonthlyBill = totalSystemCons * tariff;
+      const totalRateioFatura = compensationUnits.reduce((acc, u) => {
+        const c = parseFloat(u.consumption) || 0;
+        return acc + Math.max(taxaMinima, (c * custoKwhInjetado));
+      }, 0);
+      const newEstimatedBill = faturaUG + totalRateioFatura;
+      const monthlySaving = currentMonthlyBill - newEstimatedBill;
+
+      const paybackMonths = monthlySaving > 0 ? totalInvest / monthlySaving : 0;
+
+      y += 8;
+      doc.setTextColor(60);
+      doc.setFontSize(9);
+      doc.setFont(undefined, 'normal');
+      doc.text(`• Payback (Retorno do Investimento): ~ ${(paybackMonths / 12).toFixed(1)} anos`, 15, y);
+      doc.text(`• Economia Estimada (25 anos): ~ ${formatCurrency(monthlySaving * 12 * 25)}`, 110, y);
 
       // --- FINANCIAMENTO ---
-      y += 30;
+      y += 12;
       doc.setTextColor(...theme);
-      doc.setFontSize(11);
+      doc.setFontSize(10);
       doc.setFont(undefined, 'bold');
       doc.text("OPÇÕES DE FINANCIAMENTO (Estimado)", 15, y);
       
-      y += 10;
+      y += 8;
       doc.setTextColor(60);
-      doc.setFontSize(9);
+      doc.setFontSize(8);
       doc.setFont(undefined, 'normal');
       doc.text(`• 24x de ${formatCurrency(totalInvest * financingCoeff[24])}`, 15, y);
       doc.text(`• 36x de ${formatCurrency(totalInvest * financingCoeff[36])}`, 65, y);
       doc.text(`• 48x de ${formatCurrency(totalInvest * financingCoeff[48])}`, 115, y);
       doc.text(`• 60x de ${formatCurrency(totalInvest * financingCoeff[60])}`, 165, y);
       
-      y += 8;
-      doc.setFontSize(8);
+      y += 6;
+      doc.setFontSize(7);
       doc.setTextColor(150);
       doc.text("* Valores sujeitos a análise de crédito e alteração sem aviso prévio.", 15, y);
 
@@ -523,6 +552,31 @@ export default function ProposalForm({ companyConfig }: ProposalFormProps) {
                         <p className="text-[10px] font-bold text-orange-200 uppercase tracking-widest mb-1 text-center">Produção Estimada</p>
                         <p className="text-3xl font-black text-center">~ {(calculatedQtdP ? (calculatedQtdP * panelPower * cityHsp * 30 * 0.8 / 1000).toFixed(0) : '0')} <span className="text-sm">kWh/mês</span></p>
                     </div>
+
+                    {/* PAYBACK UI */}
+                    {kitValue + laborValue > 0 && (
+                      <div className="bg-slate-800/80 p-6 rounded-3xl border border-slate-700">
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-1 text-center">Payback Estimado</p>
+                        <p className="text-4xl font-black text-white text-center">
+                          {(() => {
+                            const tariff = 0.95;
+                            const totalInvest = kitValue + laborValue;
+                            const totalMonthlyCons = consumptionType === 'media' ? parseFloat(avgConsumption || '0') : 
+                              (monthlyConsumptions.reduce((a, b) => Number(a) + Number(b), 0) / 12);
+                            const totalCompCons = compensationUnits.reduce((acc, u) => acc + (parseFloat(u.consumption) || 0), 0);
+                            const totalSystemCons = totalMonthlyCons + totalCompCons;
+                            
+                            const currentMonthlyBill = totalSystemCons * tariff;
+                            const injetadoUG = (consumptionType === 'media' ? parseFloat(avgConsumption || '0') : (monthlyConsumptions.reduce((a, b) => Number(a) + Number(b), 0) / 12)) * (1 - simultaneity);
+                            const fUG = Math.max(50, (injetadoUG * 0.22));
+                            const fRateio = compensationUnits.reduce((acc, u) => acc + Math.max(50, (parseFloat(u.consumption) || 0) * 0.22), 0);
+                            
+                            const savings = currentMonthlyBill - (fUG + fRateio);
+                            return savings > 0 ? (totalInvest / savings / 12).toFixed(1) : '0';
+                          })()} <span className="text-sm text-slate-400 font-bold uppercase">Anos</span>
+                        </p>
+                      </div>
+                    )}
 
                     {/* AI ASSISTANT SECTION */}
                     <div className="mt-8 pt-6 border-t border-slate-700">
