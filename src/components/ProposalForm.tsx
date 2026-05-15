@@ -140,8 +140,9 @@ export default function ProposalForm({ companyConfig }: ProposalFormProps) {
       doc.text(companyConfig.razao, 15, 15);
       
       doc.setFontSize(9);
-      doc.text(`CNPJ: ${companyConfig.cnpj || "Não informado"}`, 15, 23);
-      doc.text(`WhatsApp: ${companyConfig.tel || "Não informado"}`, 15, 28);
+      doc.text(`CNPJ: ${companyConfig.cnpj || "Não informado"}`, 15, 22);
+      doc.text(`WhatsApp: ${companyConfig.tel || "Não informado"}`, 15, 27);
+      doc.text("Soluções Inteligentes em Energia Fotovoltaica", 15, 32);
       
       if (companyConfig.logo) {
         try { doc.addImage(companyConfig.logo, 'PNG', 160, 5, 35, 30); } catch(e){}
@@ -220,19 +221,20 @@ export default function ProposalForm({ companyConfig }: ProposalFormProps) {
       doc.setTextColor(...theme);
       doc.setFontSize(11);
       doc.setFont(undefined, 'bold');
-      doc.text("ESTIMATIVA DE NOVAS FATURAS", 15, y);
+      doc.text("ESTIMATIVA DE NOVAS FATURAS (Pós-Solar)", 15, y);
       
       doc.setTextColor(60);
       doc.setFontSize(9);
       doc.setFont(undefined, 'normal');
       y += 8;
-      doc.text(`Unidade Geradora (${ugContract || 'Principal'}): ${formatCurrency(faturaUG)}`, 15, y);
+      doc.text(`Unidade Geradora (${ugContract || 'Principal'}): ~ ${formatCurrency(faturaUG)} (Consumo + Taxa)`, 15, y);
       
       compensationUnits.forEach((unit, idx) => {
         y += 6;
         const cons = parseFloat(unit.consumption) || 0;
+        // Calcula a fatura considerando que o consumo será compensado, sobrando a taxa mínima/disponibilidade
         const f = Math.max(taxaMinima, (cons * custoKwhInjetado));
-        doc.text(`Unidade Rateio (${unit.contractNumber || 'Contrato'}): ${formatCurrency(f)}`, 15, y);
+        doc.text(`Unidade Rateio (${unit.contractNumber || 'Contrato'}): ~ ${formatCurrency(f)} (Incluso Taxa Mínima)`, 15, y);
       });
 
       if (aiAnalysis) {
