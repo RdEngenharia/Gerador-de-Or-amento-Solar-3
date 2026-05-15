@@ -1,0 +1,6 @@
+{
+  "name": "RD Solar Pro - Gerador de Orçamentos",
+  "description": "Sistema profissional para dimensionamento de sistemas fotovoltaicos, geração de propostas técnicas em PDF e gestão de unidades de rateio. Inclui cálculos de HSP por capital e suporte a múltiplos inversores/painéis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["photo_gallery", "pdf_generation"]
+}
